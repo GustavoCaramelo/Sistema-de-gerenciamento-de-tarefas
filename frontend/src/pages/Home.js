@@ -1,11 +1,13 @@
-import React from "react";
+import React from 'react';
+import TaskManager from '../components/TaskManager';
 
-function Home() {
+const Home = () => {
   return (
     <div>
-      <h1>Bem-vindo ao Sistema de Gerenciamento de Tarefas</h1>
+      <h1>Página Inicial</h1>
+      <TaskManager />
     </div>
   );
-}
+};
 
 export default Home;
