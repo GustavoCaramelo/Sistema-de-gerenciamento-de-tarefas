@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 
@@ -55,3 +57,60 @@ mongoose
     app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
   })
   .catch((error) => console.log(`Erro ao conectar ao MongoDB: ${error.message}`));
+
+  // Modelo de Usuário
+const UserSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+});
+const User = mongoose.model('User', UserSchema);
+
+// Rota de Registro
+app.post('/register', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Verifica se o usuário já existe
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Usuário já existe' });
+    }
+
+    // Criptografa a senha
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Cria um novo usuário
+    const user = new User({ username, password: hashedPassword });
+    await user.save();
+
+    res.status(201).json({ message: 'Usuário registrado com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao registrar o usuário' });
+  }
+});
+
+// Rota de Login
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Busca o usuário no banco
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+
+    // Compara as senhas
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Credenciais inválidas' });
+    }
+
+    // Gera o token JWT
+    const token = jwt.sign({ id: user._id }, 'secreto', { expiresIn: '1h' });
+
+    res.status(200).json({ token, message: 'Login realizado com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao fazer login' });
+  }
+});
