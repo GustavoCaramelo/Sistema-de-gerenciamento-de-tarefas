@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState(""); // Adicionado estado para erros
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/register', { username, password });
-      setMessage('Registro bem-sucedido! Redirecionando para o login...');
-      setTimeout(() => navigate('/login'), 2000); // Redireciona após 2 segundos
-    } catch (error) {
-      setMessage(error.response?.data?.error || 'Erro ao registrar');
+      const response = await axios.post("http://localhost:5000/register", { username, password });
+      setMessage("Registro bem-sucedido! Faça login.");
+      setError(""); // Limpa os erros anteriores
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (err) {
+      setError(err.response?.data?.message || "Erro ao registrar");
     }
   };
 
@@ -37,7 +39,9 @@ const Register = () => {
         />
         <button type="submit">Registrar</button>
       </form>
-      {message && <p>{message}</p>}
+      <button onClick={() => navigate("/login")}>Já tenho uma conta</button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {message && <p style={{ color: 'green' }}>{message}</p>}
     </div>
   );
 };

@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from "react";
 import TaskManager from "../components/TaskManager";
+import api from "../api"; // Cliente configurado para autenticação
 
 const Home = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    // Busca o nome do usuário do localStorage
-    const storedUserName = localStorage.getItem("userName");
-    setUserName(storedUserName || "Usuário");
+    const fetchUserName = async () => {
+      try {
+        const response = await api.get("/user/me");
+        setUserName(response.data.name || "Usuário");
+      } catch (error) {
+        console.error("Erro ao buscar o nome do usuário:", error);
+        setUserName("Usuário"); // Define um nome padrão caso falhe
+      }
+    };
+  
+    fetchUserName();
   }, []);
 
   const handleLogout = () => {
-    // Remova o token e o nome do usuário do localStorage e redirecione para a tela de login
+    // Remove o token JWT e limpa os dados do usuário
     localStorage.removeItem("token");
-    localStorage.removeItem("userName");
+    api.defaults.headers.common["Authorization"] = null; // Remove o token do cabeçalho
     window.location.href = "/login"; // Redireciona para a página de login
   };
 

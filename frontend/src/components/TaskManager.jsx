@@ -16,4 +16,4 @@ const TaskManager = () => {
   );
 };
 
-export default TaskManager
+export default TaskManager;

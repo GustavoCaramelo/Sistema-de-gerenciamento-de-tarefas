@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api'; // Substitui o axios pelo cliente `api`
 
 const GetTasks = () => {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/tasks')
+    api.get('/tasks')
       .then((response) => setTasks(response.data))
       .catch((error) => console.error('Erro ao buscar tarefas:', error));
   }, []);

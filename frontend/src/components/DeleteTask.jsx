@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api'; // Substitui o axios pelo cliente `api`
 
 const DeleteTask = () => {
   const [taskId, setTaskId] = useState('');
 
   const handleDelete = () => {
-    axios.delete(`http://localhost:5000/tasks/${taskId}`)
+    api.delete(`/tasks/${taskId}`)
       .then(() => {
         console.log('Tarefa excluída com sucesso');
         setTaskId('');

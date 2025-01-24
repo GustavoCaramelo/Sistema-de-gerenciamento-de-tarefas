@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api'; // Substitui o axios pelo cliente `api`
 
 const CreateTask = () => {
   const [formData, setFormData] = useState({ title: '', description: '' });
@@ -11,7 +11,7 @@ const CreateTask = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/tasks', formData)
+    api.post('/tasks', formData)
       .then((response) => {
         console.log('Tarefa criada:', response.data);
         setFormData({ title: '', description: '' });

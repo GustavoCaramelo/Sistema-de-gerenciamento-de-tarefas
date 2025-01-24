@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api'; // Substitui o axios pelo cliente `api`
 
 const UpdateTask = () => {
   const [taskId, setTaskId] = useState('');
@@ -12,7 +12,7 @@ const UpdateTask = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:5000/tasks/${taskId}`, formData)
+    api.put(`/tasks/${taskId}`, formData)
       .then((response) => console.log('Tarefa atualizada:', response.data))
       .catch((error) => console.error('Erro ao atualizar tarefa:', error));
   };
