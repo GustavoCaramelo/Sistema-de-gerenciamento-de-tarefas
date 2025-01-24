@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { getTasks, createTask, updateTask, deleteTask } = require('../controllers/taskController');
-const validateTask = require('../middlewares/validateTask'); // Middleware de validação de tarefas
+const authMiddleware = require('../middleware/authMiddleware'); // Importa o middleware
 
 router.route('/')
-    .get(getTasks)
-    .post(validateTask, createTask); // Validações antes de criar tarefa
+  .get(authMiddleware, getTasks) // Protege a rota GET
+  .post(authMiddleware, createTask); // Protege a rota POST
 
 router.route('/:id')
-    .put(validateTask, updateTask) // Validações antes de atualizar tarefa
-    .delete(deleteTask);
+  .put(authMiddleware, updateTask) // Protege a rota PUT
+  .delete(authMiddleware, deleteTask); // Protege a rota DELETE
 
 module.exports = router;

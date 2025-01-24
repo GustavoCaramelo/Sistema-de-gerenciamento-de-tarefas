@@ -1,22 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import api from '../api'; // Substitui o axios pelo cliente `api`
 
-const GetTasks = () => {
-  const [tasks, setTasks] = useState([]);
-
+const GetTasks = ({ tasks, onTasksUpdated }) => {
   useEffect(() => {
-    api.get('/tasks')
-      .then((response) => setTasks(response.data))
-      .catch((error) => console.error('Erro ao buscar tarefas:', error));
-  }, []);
+    const fetchTasks = async () => {
+      try {
+        const response = await api.get('/tasks'); // Obtém as tarefas do backend
+        onTasksUpdated(response.data); // Atualiza o estado global
+      } catch (error) {
+        console.error('Erro ao carregar tarefas:', error);
+      }
+    };
+
+    fetchTasks();
+  }, [onTasksUpdated]); // Atualiza apenas quando a prop `onTasksUpdated` mudar
 
   return (
     <div>
-      <h2>Tarefas</h2>
+      <h2>Lista de Tarefas</h2>
       <ul>
         {tasks.map((task) => (
-          <li key={task._id}>
-            {task.title} - {task.description}
+          <li key={task.id}>
+            <strong>{task._id} - {task.title}</strong> - {task.description} ({task.completed ? 'Concluído' : 'Pendente'})
           </li>
         ))}
       </ul>

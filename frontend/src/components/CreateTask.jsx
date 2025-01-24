@@ -1,41 +1,39 @@
 import React, { useState } from 'react';
-import api from '../api'; // Substitui o axios pelo cliente `api`
+import api from '../api';
 
-const CreateTask = () => {
-  const [formData, setFormData] = useState({ title: '', description: '' });
+const CreateTask = ({ onTasksUpdated }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    api.post('/tasks', formData)
-      .then((response) => {
-        console.log('Tarefa criada:', response.data);
-        setFormData({ title: '', description: '' });
-      })
-      .catch((error) => console.error('Erro ao criar tarefa:', error));
+  const handleCreate = async () => {
+    try {
+      await api.post('/tasks', { title, description });
+      const response = await api.get('/tasks'); // Busca novamente todas as tarefas
+      onTasksUpdated(response.data); // Atualiza a lista
+      setTitle('');
+      setDescription('');
+    } catch (error) {
+      console.error('Erro ao criar tarefa:', error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
+      <h2>Criar Tarefa</h2>
       <input
         type="text"
-        name="title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         placeholder="Título"
-        value={formData.title}
-        onChange={handleChange}
       />
-      <textarea
-        name="description"
+      <input
+        type="text"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
         placeholder="Descrição"
-        value={formData.description}
-        onChange={handleChange}
       />
-      <button type="submit">Criar Tarefa</button>
-    </form>
+      <button onClick={handleCreate}>Criar</button>
+    </div>
   );
 };
 

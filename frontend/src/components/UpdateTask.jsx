@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api'; // Substitui o axios pelo cliente `api`
 
-const UpdateTask = () => {
+const UpdateTask = ({ onTasksUpdated }) => {
   const [taskId, setTaskId] = useState('');
   const [formData, setFormData] = useState({ title: '', description: '', completed: false });
 
@@ -10,45 +10,58 @@ const UpdateTask = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    api.put(`/tasks/${taskId}`, formData)
-      .then((response) => console.log('Tarefa atualizada:', response.data))
-      .catch((error) => console.error('Erro ao atualizar tarefa:', error));
+    try {
+      await api.put(`/tasks/${taskId}`, formData);
+      console.log('Tarefa atualizada com sucesso');
+      const response = await api.get('/tasks'); // Obtém a lista atualizada de tarefas
+      onTasksUpdated(response.data); // Atualiza o estado no componente pai
+      setTaskId(''); // Limpa o campo de ID
+      setFormData({ title: '', description: '', completed: false }); // Reseta o formulário
+    } catch (error) {
+      console.error('Erro ao atualizar tarefa:', error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="ID da Tarefa"
-        value={taskId}
-        onChange={(e) => setTaskId(e.target.value)}
-      />
-      <input
-        type="text"
-        name="title"
-        placeholder="Título"
-        value={formData.title}
-        onChange={handleChange}
-      />
-      <textarea
-        name="description"
-        placeholder="Descrição"
-        value={formData.description}
-        onChange={handleChange}
-      />
-      <label>
-        Concluído:
+    <div>
+      <h2>Editar Tarefa</h2>
+      <form onSubmit={handleSubmit}>
         <input
-          type="checkbox"
-          name="completed"
-          checked={formData.completed}
-          onChange={(e) => setFormData((prev) => ({ ...prev, completed: e.target.checked }))}
+          type="text"
+          placeholder="ID da Tarefa"
+          value={taskId}
+          onChange={(e) => setTaskId(e.target.value)}
         />
-      </label>
-      <button type="submit">Atualizar Tarefa</button>
-    </form>
+        <input
+          type="text"
+          name="title"
+          placeholder="Título"
+          value={formData.title}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="description"
+          placeholder="Descrição"
+          value={formData.description}
+          onChange={handleChange}
+        />
+        <label>
+          Concluído:
+          <input
+            type="checkbox"
+            name="completed"
+            checked={formData.completed}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, completed: e.target.checked }))
+            }
+          />
+        </label>
+        <button type="submit">Atualizar Tarefa</button>
+      </form>
+    </div>
   );
 };
 
