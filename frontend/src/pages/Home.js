@@ -28,7 +28,7 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#5559', height: '926px'}}>
       <header>
         <div className="user-menu">
           <span onClick={() => setShowDropdown(!showDropdown)}>
@@ -43,7 +43,6 @@ const Home = () => {
       </header>
       <main>
         <h1>Bem-vindo, {userName}!</h1>
-        {/* Renderiza o gerenciador de tarefas */}
         <TaskManager />
       </main>
     </div>

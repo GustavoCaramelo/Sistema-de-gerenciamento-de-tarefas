@@ -14,9 +14,10 @@ app.use(cors());
 
 // Modelo de Tarefa
 const TaskSchema = new mongoose.Schema({
-  title: String,
+  title: { type: String, required: true },
   description: String,
   completed: { type: Boolean, default: false },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Associação com o usuário
 });
 const Task = mongoose.model('Task', TaskSchema);
 
@@ -46,29 +47,75 @@ const authenticateToken = (req, res, next) => {
 
 // Rotas protegidas de Tarefas
 app.get('/tasks', authenticateToken, async (req, res) => {
-  const tasks = await Task.find();
-  res.json(tasks);
+  try {
+    const tasks = await Task.find({ user: req.user.id }); // Filtra apenas as tarefas do usuário
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar tarefas' });
+  }
 });
+
 
 app.post('/tasks', authenticateToken, async (req, res) => {
   const { title, description } = req.body;
-  const task = new Task({ title, description });
-  await task.save();
-  res.json(task);
+
+  if (!title) {
+    return res.status(400).json({ message: 'O título é obrigatório' });
+  }
+
+  try {
+    const task = new Task({
+      title,
+      description,
+      user: req.user.id, // Associa a tarefa ao usuário autenticado
+    });
+    await task.save();
+    res.status(201).json(task);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao criar tarefa' });
+  }
 });
+
 
 app.put('/tasks/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { title, description, completed } = req.body;
-  const task = await Task.findByIdAndUpdate(id, { title, description, completed }, { new: true });
-  res.json(task);
+
+  try {
+    const task = await Task.findOne({ _id: id, user: req.user.id }); // Verifica se a tarefa pertence ao usuário
+
+    if (!task) {
+      return res.status(404).json({ message: 'Tarefa não encontrada' });
+    }
+
+    task.title = title || task.title;
+    task.description = description || task.description;
+    task.completed = typeof completed === 'boolean' ? completed : task.completed;
+
+    const updatedTask = await task.save();
+    res.json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar tarefa' });
+  }
 });
+
 
 app.delete('/tasks/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
-  await Task.findByIdAndDelete(id);
-  res.json({ message: 'Tarefa excluída com sucesso!' });
+
+  try {
+    const task = await Task.findOneAndDelete({ _id: id, user: req.user.id }); // Verifica se a tarefa pertence ao usuário
+
+    if (!task) {
+      return res.status(404).json({ message: 'Tarefa não encontrada' });
+    }
+
+    res.json({ message: 'Tarefa excluída com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao excluir tarefa' });
+  }
 });
+
 
 // Rota de Registro
 app.post('/register', async (req, res) => {

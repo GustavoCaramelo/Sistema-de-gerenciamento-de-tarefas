@@ -23,7 +23,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#5559', height: '906px'}}>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
@@ -40,7 +40,8 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </form>
-      <button onClick={() => navigate('/register')}>Registrar</button>
+      <span>Caso não tenha login, crie aqui</span>
+      <button onClick={() => navigate('/register')} style={{ marginLeft: '5px', backgroundColor: '#5559' }}>Criar login</button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );

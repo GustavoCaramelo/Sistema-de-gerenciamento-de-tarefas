@@ -20,7 +20,7 @@ export const getUserProfile = async (token) => {
 
 // Adiciona o token JWT no cabeçalho de autorização
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token'); // Obtém o token do localStorage
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
