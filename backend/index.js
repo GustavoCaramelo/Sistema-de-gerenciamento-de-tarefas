@@ -119,7 +119,19 @@ app.delete('/tasks/:id', authenticateToken, async (req, res) => {
 
 // Rota de Registro
 app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, confirmPassword } = req.body;
+
+  // Verifica se a senha e a confirmação correspondem
+  if (password !== confirmPassword) {
+    return res.status(400).json({ error: 'As senhas não coincidem' });
+  }
+
+  // Verifica o tamanho mínimo da senha
+  if (password.length < 6) {
+    return res
+      .status(400)
+      .json({ error: 'A senha deve ter no mínimo 6 caracteres' });
+  }
 
   try {
     const existingUser = await User.findOne({ username });
