@@ -7,17 +7,10 @@ const Home = () => {
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const response = await api.get("/user/me");
-        setUserName(response.data.name || "Usuário");
-      } catch (error) {
-        console.error("Erro ao buscar o nome do usuário:", error);
-        setUserName("Usuário"); // Define um nome padrão caso falhe
-      }
-    };
-  
-    fetchUserName();
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUserName(storedUsername);
+    }
   }, []);
 
   const handleLogout = () => {
@@ -32,7 +25,7 @@ const Home = () => {
       <header>
         <div className="user-menu">
           <span onClick={() => setShowDropdown(!showDropdown)}>
-            {userName}
+          {userName ? userName : 'Usuario'}
           </span>
           {showDropdown && (
             <div className="dropdown">

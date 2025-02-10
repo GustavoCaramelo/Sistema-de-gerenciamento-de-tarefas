@@ -8,19 +8,30 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Estado de loading
+  const [showTooltip, setShowTooltip] = useState(false);
   const navigate = useNavigate();
+
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+    return regex.test(password);
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Ativa o loading
 
-    // Validações no front-end
-    if (password.length < 6) {
-      setError("A senha deve ter no mínimo 6 caracteres.");
+    if (!validatePassword(password)) {
+      setError(
+        "A senha deve ter no mínimo 6 caracteres, incluindo ao menos uma letra maiúscula, uma minúscula e um número."
+      );
+      setIsLoading(false); // Desativa o loading
       return;
     }
 
     if (password !== confirmPassword) {
       setError("As senhas não coincidem. Tente novamente.");
+      setIsLoading(false); // Desativa o loading
       return;
     }
 
@@ -28,10 +39,9 @@ const Register = () => {
       const response = await axios.post("http://localhost:5000/register", {
         username,
         password,
-        confirmPassword, // Incluindo o campo confirmPassword no corpo da requisição
       });
 
-      if (response.status === 201) { // Alterado para 201, pois o back-end retorna 201 ao registrar com sucesso
+      if (response.status === 200) {
         setMessage("Registro bem-sucedido! Faça login.");
         setError("");
         setTimeout(() => navigate("/login"), 2000);
@@ -39,7 +49,9 @@ const Register = () => {
         throw new Error("Erro inesperado. Tente novamente.");
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Erro ao registrar.");
+      setError(err.response?.data?.message || "Erro ao registrar.");
+    } finally {
+      setIsLoading(false); // Desativa o loading após finalizar
     }
   };
 
@@ -54,13 +66,28 @@ const Register = () => {
           onChange={(e) => setUsername(e.target.value)}
           required
         />
-        <input
-          type="password"
-          placeholder="Senha (mínimo 6 caracteres)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div style={{ position: "relative", display: "inline-block" }}>
+          <input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          />
+          {showTooltip && (
+            <div style={{ position: "absolute", top: "100%", left: "0", backgroundColor: "#f0f0f0", padding: "5px", zIndex: 10 }}>
+              A senha deve ter:
+              <ul>
+                <li>Mínimo de 6 caracteres</li>
+                <li>Uma letra maiúscula</li>
+                <li>Uma letra minúscula</li>
+                <li>Um número</li>
+              </ul>
+            </div>
+          )}
+        </div>
         <input
           type="password"
           placeholder="Confirme a senha"
@@ -68,7 +95,9 @@ const Register = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
-        <button type="submit">Registrar</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Carregando..." : "Registrar"}
+        </button>
       </form>
       <button onClick={() => navigate("/login")}>Já tenho uma conta</button>
       {error && <p style={{ color: "red" }}>{error}</p>}

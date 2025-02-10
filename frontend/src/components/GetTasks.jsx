@@ -27,8 +27,8 @@ const GetTasks = ({ onTasksUpdated }) => {
       <h2>Suas Tarefas</h2>
       <ul>
         {tasks.map((task) => (
-          <li key={task.id}>
-            <strong>{task._id} - {task.title}</strong> - {task.description} ({task.completed ? 'Concluído' : 'Pendente'})
+          <li key={task.shortId}>
+            <strong>{task.shortId} - {task.title}</strong> - {task.description} ({task.completed ? 'Concluído' : 'Pendente'})
           </li>
         ))}
       </ul>

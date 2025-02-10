@@ -13,7 +13,13 @@ const UpdateTask = ({ onTasksUpdated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/tasks/${taskId}`, formData);
+      // Cria um objeto com apenas os campos preenchidos
+      const payload = {};
+      if (formData.title.trim()) payload.title = formData.title.trim();
+      if (formData.description.trim()) payload.description = formData.description.trim();
+      payload.completed = formData.completed; // Sempre enviar `completed`
+
+      await api.put(`/tasks/${taskId}`, payload); // Envia apenas os campos preenchidos
       console.log('Tarefa atualizada com sucesso');
       const response = await api.get('/tasks'); // Obtém a lista atualizada de tarefas
       onTasksUpdated(response.data); // Atualiza o estado no componente pai

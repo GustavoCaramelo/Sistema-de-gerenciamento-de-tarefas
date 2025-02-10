@@ -5,6 +5,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const errorHandler = require('./middlewares/errorHandler');
+const { nanoid } = require('nanoid'); // Importe o nanoid
 
 const app = express();
 
@@ -17,8 +18,10 @@ const TaskSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
   completed: { type: Boolean, default: false },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Associação com o usuário
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  shortId: { type: String, unique: true, default: () => nanoid(4) }, // Gera um shortId de 4 caracteres
 });
+
 const Task = mongoose.model('Task', TaskSchema);
 
 // Modelo de Usuário
@@ -48,8 +51,8 @@ const authenticateToken = (req, res, next) => {
 // Rotas protegidas de Tarefas
 app.get('/tasks', authenticateToken, async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user.id }); // Filtra apenas as tarefas do usuário
-    res.json(tasks);
+    const tasks = await Task.find({ user: req.user.id });
+    res.json(tasks); // `shortId` será incluído automaticamente
   } catch (error) {
     res.status(500).json({ message: 'Erro ao buscar tarefas' });
   }
@@ -88,9 +91,11 @@ app.put('/tasks/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ message: 'Tarefa não encontrada' });
     }
 
-    task.title = title || task.title;
-    task.description = description || task.description;
-    task.completed = typeof completed === 'boolean' ? completed : task.completed;
+    // Atualiza somente os campos preenchidos, mantendo os valores anteriores caso estejam vazios
+    task.title = title?.trim() || task.title; // Usa o valor atual se o novo for vazio
+    task.description = description?.trim() || task.description;
+    task.completed =
+      typeof completed === 'boolean' ? completed : task.completed;
 
     const updatedTask = await task.save();
     res.json(updatedTask);
