@@ -26,12 +26,12 @@ const TaskManager = () => {
   };
 
   return (
-    <div>
-      <h1>Gerenciamento de Tarefas</h1>
+    <div className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold text-gray-700 text-center mb-6">Gerenciamento de Tarefas</h1>
       <CreateTask onTasksUpdated={handleTasksUpdated} />
       <GetTasks tasks={tasks} onTasksUpdated={handleTasksUpdated} />
-      <UpdateTask tasks={tasks} onTasksUpdated={handleTasksUpdated} />
-      <DeleteTask tasks={tasks} onTasksUpdated={handleTasksUpdated} />
+      <UpdateTask onTasksUpdated={handleTasksUpdated} />
+      <DeleteTask onTasksUpdated={handleTasksUpdated} />
     </div>
   );
 };

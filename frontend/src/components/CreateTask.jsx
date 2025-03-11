@@ -29,15 +29,16 @@ const CreateTask = ({ onTasksUpdated }) => {
   };
 
   return (
-    <div>
-      <h2>Criar Tarefa</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+      <h2 className="text-xl font-bold mb-4 text-gray-700">Criar Tarefa</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           name="title"
           placeholder="Título"
           value={formData.title}
           onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
         />
         <input
           type="text"
@@ -45,8 +46,14 @@ const CreateTask = ({ onTasksUpdated }) => {
           placeholder="Descrição"
           value={formData.description}
           onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
         />
-        <button type="submit">Criar</button>
+        <button
+          type="submit"
+          className="w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 transition duration-200"
+        >
+          Criar
+        </button>
       </form>
     </div>
   );

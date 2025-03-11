@@ -28,60 +28,42 @@ const Login = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#5559', height: '906px' }}>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Usuário"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={isLoading} style={{ position: 'relative' }}>
-          {isLoading ? (
-            <div
-              style={{
-                width: '20px',
-                height: '20px',
-                border: '3px solid #ccc',
-                borderTop: '3px solid #555',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
-                margin: '0 auto',
-              }}
-            />
-          ) : (
-            'Login'
-          )}
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <div className="bg-white p-6 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
+        <form onSubmit={handleLogin} className="flex flex-col">
+          <input
+            type="text"
+            placeholder="Usuário"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border p-2 rounded mb-2"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded mb-2"
+            required
+          />
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
+            {isLoading ? "Carregando..." : "Login"}
+          </button>
+        </form>
+        {error && <p className="text-red-500 mt-2">{error}</p>}
+        <button
+          onClick={() => navigate("/register")}
+          className="mt-4 text-blue-500 hover:underline"
+        >
+          Criar login
         </button>
-      </form>
-      <span>Caso não tenha login, crie aqui</span>
-      <button onClick={() => navigate('/register')} style={{ marginLeft: '5px', backgroundColor: '#5559' }}>
-        Criar login
-      </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      {/* Adiciona a animação do spinner no estilo global */}
-      <style>
-        {`
-          @keyframes spin {
-            0% {
-              transform: rotate(0deg);
-            }
-            100% {
-              transform: rotate(360deg);
-            }
-          }
-        `}
-      </style>
+      </div>
     </div>
   );
 };

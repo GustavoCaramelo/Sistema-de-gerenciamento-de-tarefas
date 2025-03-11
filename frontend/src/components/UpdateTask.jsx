@@ -31,14 +31,15 @@ const UpdateTask = ({ onTasksUpdated }) => {
   };
 
   return (
-    <div>
-      <h2>Editar Tarefa</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+      <h2 className="text-xl font-bold mb-4 text-gray-700">Editar Tarefa</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           placeholder="ID da Tarefa"
           value={taskId}
           onChange={(e) => setTaskId(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="text"
@@ -46,6 +47,7 @@ const UpdateTask = ({ onTasksUpdated }) => {
           placeholder="Título"
           value={formData.title}
           onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="text"
@@ -53,9 +55,9 @@ const UpdateTask = ({ onTasksUpdated }) => {
           placeholder="Descrição"
           value={formData.description}
           onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <label>
-          Concluído:
+        <label className="flex items-center space-x-2 text-gray-700">
           <input
             type="checkbox"
             name="completed"
@@ -63,9 +65,16 @@ const UpdateTask = ({ onTasksUpdated }) => {
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, completed: e.target.checked }))
             }
+            className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
           />
+          <span>Concluído</span>
         </label>
-        <button type="submit">Atualizar Tarefa</button>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition duration-200"
+        >
+          Atualizar Tarefa
+        </button>
       </form>
     </div>
   );

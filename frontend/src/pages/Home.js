@@ -21,11 +21,11 @@ const Home = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#5559', height: '926px'}}>
+    <div className="p-6">
       <header>
         <div className="user-menu">
           <span onClick={() => setShowDropdown(!showDropdown)}>
-          {userName ? userName : 'Usuario'}
+            {userName ? userName : 'Usuario'}
           </span>
           {showDropdown && (
             <div className="dropdown">
@@ -34,10 +34,8 @@ const Home = () => {
           )}
         </div>
       </header>
-      <main>
-        <h1>Bem-vindo, {userName}!</h1>
-        <TaskManager />
-      </main>
+      <h1 className="text-2xl font-bold">Bem-vindo, {userName}!</h1>
+      <TaskManager />
     </div>
   );
 };

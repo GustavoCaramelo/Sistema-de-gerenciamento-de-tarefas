@@ -56,52 +56,51 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Registrar</h2>
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Usuário"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <div style={{ position: "relative", display: "inline-block" }}>
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <div className="bg-white p-6 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-4">Registrar</h2>
+        <form onSubmit={handleRegister} className="flex flex-col">
+          <input
+            type="text"
+            placeholder="Usuário"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border p-2 rounded mb-2"
+            required
+          />
           <input
             type="password"
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded mb-2"
             required
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
           />
-          {showTooltip && (
-            <div style={{ position: "absolute", top: "100%", left: "0", backgroundColor: "#f0f0f0", padding: "5px", zIndex: 10 }}>
-              A senha deve ter:
-              <ul>
-                <li>Mínimo de 6 caracteres</li>
-                <li>Uma letra maiúscula</li>
-                <li>Uma letra minúscula</li>
-                <li>Um número</li>
-              </ul>
-            </div>
-          )}
-        </div>
-        <input
-          type="password"
-          placeholder="Confirme a senha"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Carregando..." : "Registrar"}
+          <input
+            type="password"
+            placeholder="Confirme a senha"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="border p-2 rounded mb-2"
+            required
+          />
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
+            {isLoading ? "Carregando..." : "Registrar"}
+          </button>
+        </form>
+        {error && <p className="text-red-500 mt-2">{error}</p>}
+        {message && <p className="text-green-500 mt-2">{message}</p>}
+        <button
+          onClick={() => navigate("/login")}
+          className="mt-4 text-blue-500 hover:underline"
+        >
+          Já tenho uma conta
         </button>
-      </form>
-      <button onClick={() => navigate("/login")}>Já tenho uma conta</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {message && <p style={{ color: "green" }}>{message}</p>}
+      </div>
     </div>
   );
 };
